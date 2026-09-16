@@ -109,10 +109,22 @@
         .two-columns > div {
             flex: 1;
         }
+		.did-you-know {
+    position: fixed;
+    top: 35px;
+    left: 60px;
+    z-index: 1000;
+
+    font-size: 32px;
+    font-weight: 600;
+
+    color: #555555;
+}
     </style>
 </head>
 
 <body>
+	<div class="did-you-know">Did you know...?</div>
 
     <!-- SLIDE 1 -->
 
@@ -258,54 +270,115 @@
 
     <script>
 
-        const slides = document.querySelectorAll(".slide");
+    const slides = document.querySelectorAll(".slide");
 
-        const slideDuration = 30000;
+    const slideDuration = 30000;
 
-        let currentSlide = -1;
+    let currentSlide = 0;
+    let slideTimer;
 
 
-        function getRandomSlide() {
+    function showSlide(index) {
 
-            if (slides.length === 1) {
-                return 0;
-            }
+        slides.forEach(slide => {
+            slide.classList.remove("active");
+        });
 
-            let nextSlide;
-
-            do {
-                nextSlide = Math.floor(
-                    Math.random() * slides.length
-                );
-            }
-            while (nextSlide === currentSlide);
-
-            return nextSlide;
+        // Wenn wir hinter die letzte Slide gehen,
+        // springen wir wieder zur ersten.
+        if (index >= slides.length) {
+            index = 0;
         }
 
-
-        function showRandomSlide() {
-
-            slides.forEach(slide => {
-                slide.classList.remove("active");
-            });
-
-            currentSlide = getRandomSlide();
-
-            slides[currentSlide]
-                .classList
-                .add("active");
+        // Wenn wir vor die erste Slide gehen,
+        // springen wir zur letzten.
+        if (index < 0) {
+            index = slides.length - 1;
         }
 
+        currentSlide = index;
 
-        showRandomSlide();
+        slides[currentSlide]
+            .classList
+            .add("active");
+    }
 
-        setInterval(
-            showRandomSlide,
-            slideDuration
-        );
 
-    </script>
+    function getRandomSlide() {
+
+        if (slides.length <= 1) {
+            return 0;
+        }
+
+        let nextSlide;
+
+        do {
+            nextSlide = Math.floor(
+                Math.random() * slides.length
+            );
+        }
+        while (nextSlide === currentSlide);
+
+        return nextSlide;
+    }
+
+
+    function showRandomSlide() {
+
+        const nextSlide = getRandomSlide();
+
+        showSlide(nextSlide);
+    }
+
+
+    function startTimer() {
+
+        clearInterval(slideTimer);
+
+        slideTimer = setInterval(() => {
+            showRandomSlide();
+        }, slideDuration);
+    }
+
+
+    function nextSlide() {
+
+        showSlide(currentSlide + 1);
+
+        startTimer();
+    }
+
+
+    function previousSlide() {
+
+        showSlide(currentSlide - 1);
+
+        startTimer();
+    }
+
+
+    document.addEventListener("keydown", event => {
+
+        if (event.key === "ArrowRight") {
+            nextSlide();
+        }
+
+        if (event.key === "ArrowLeft") {
+            previousSlide();
+        }
+
+    });
+
+
+    // Beim Start direkt eine zufällige Slide anzeigen
+    currentSlide = getRandomSlide();
+
+    showSlide(currentSlide);
+
+    // Automatischen Wechsel starten
+    startTimer();
+
+</script>
 
 </body>
 </html>
