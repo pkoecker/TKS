@@ -45,16 +45,15 @@
            ========================================================= */
 
         #screen {
-			position: absolute;
+    position: relative;
 
-			width: 1920px;
-			height: 1080px;
+    width: 100vw;
+    height: 100vh;
 
-			background: #ffffff;
-			overflow: hidden;
+    background: #ffffff;
 
-			transform-origin: top left;
-		}
+    overflow: hidden;
+}
 
 
         /* =========================================================
@@ -1065,38 +1064,6 @@
     );
 
 }
-
-function scaleScreen() {
-
-    const screen =
-        document.getElementById("screen");
-
-    const scaleX =
-        window.innerWidth / 1920;
-
-    const scaleY =
-        window.innerHeight / 1080;
-
-    const scale =
-        Math.min(scaleX, scaleY);
-
-    screen.style.transform =
-        `scale(${scale})`;
-
-    screen.style.left =
-        ((window.innerWidth - 1920 * scale) / 2)
-        + "px";
-
-    screen.style.top =
-        ((window.innerHeight - 1080 * scale) / 2)
-        + "px";
-}
-
-window.addEventListener(
-    "resize",
-    scaleScreen
-);
-
 
 
     /* =============================================================
