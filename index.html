@@ -45,15 +45,16 @@
            ========================================================= */
 
         #screen {
-            position: relative;
+			position: absolute;
 
-            width: 1920px;
-            height: 1080px;
+			width: 1920px;
+			height: 1080px;
 
-            background: #ffffff;
+			background: #ffffff;
+			overflow: hidden;
 
-            overflow: hidden;
-        }
+			transform-origin: top left;
+		}
 
 
         /* =========================================================
@@ -1055,8 +1056,8 @@
         qrContainer,
         {
             text: url,
-            width: 140,
-            height: 140,
+            width: 280,
+            height: 280,
 
             correctLevel:
                 QRCode.CorrectLevel.H
@@ -1065,6 +1066,37 @@
 
 }
 
+function scaleScreen() {
+
+    const screen =
+        document.getElementById("screen");
+
+    const scaleX =
+        window.innerWidth / 1920;
+
+    const scaleY =
+        window.innerHeight / 1080;
+
+    const scale =
+        Math.min(scaleX, scaleY);
+
+    screen.style.transform =
+        `scale(${scale})`;
+
+    screen.style.left =
+        ((window.innerWidth - 1920 * scale) / 2)
+        + "px";
+
+    screen.style.top =
+        ((window.innerHeight - 1080 * scale) / 2)
+        + "px";
+}
+
+window.addEventListener(
+    "resize",
+    scaleScreen
+);
+
 
 
     /* =============================================================
@@ -1072,6 +1104,7 @@
        ============================================================= */
 
     loadSlideList();
+	scaleScreen();
 
 
 </script>
