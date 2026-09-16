@@ -41,84 +41,104 @@
 
 
         /* =========================================================
-           GESAMTER 1920x1080 BILDSCHIRM
+           GESAMTER BILDSCHIRM
            ========================================================= */
 
-#screen {
-    position: relative;
+        #screen {
+            position: relative;
 
-    width: 100vw;
-    height: 100vh;
+            width: 100vw;
+            height: 100vh;
 
-    background: #ffffff;
-    overflow: hidden;
-}
+            overflow: hidden;
 
-
-/* Header */
-
-#header {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 11vh;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding:
-        2vh
-        4vw
-        1vh
-        3vw;
-
-    z-index: 100;
-}
+            background: #ffffff;
+        }
 
 
-#did-you-know {
-    font-size: 2.5vh;
-    font-weight: 600;
+        /* =========================================================
+           HEADER
+           ========================================================= */
 
-    color: #555555;
-}
+        #header {
+            position: absolute;
+
+            top: 0;
+            left: 0;
+            right: 0;
+
+            height: 11vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding:
+                2vh
+                4vw
+                1vh
+                3vw;
+
+            z-index: 100;
+        }
 
 
-#logo {
-    width: auto;
-    height: 7vh;
+        #did-you-know {
+            font-size: 2.5vh;
+            font-weight: 600;
 
-    object-fit: contain;
-}
+            color: #555555;
+        }
 
 
-/* Slide */
+        #logo {
+            width: auto;
+            height: 7vh;
 
-#slide-container {
-    position: absolute;
+            object-fit: contain;
+        }
 
-    top: 11vh;
-    left: 0;
-    right: 0;
-    bottom: 0;
 
-    width: auto;
-    height: auto;
+        /* =========================================================
+           SLIDE-BEREICH
+           ========================================================= */
 
-    padding:
-        1vh
-        5vw
-        4vh
-        4vw;
+        #slide-container {
+            position: absolute;
 
-    overflow: hidden;
+            top: 11vh;
+            left: 0;
+            right: 0;
+            bottom: 0;
 
-    font-size: 32px;
-}
+            padding:
+                1vh
+                4vw
+                4vh
+                4vw;
+
+            overflow: hidden;
+
+            /*
+             * Ausgangsgröße.
+             *
+             * Wenn die Slide nicht passt, wird nicht nur die Schrift,
+             * sondern der gesamte Slide-Inhalt proportional skaliert.
+             */
+            font-size: 32px;
+        }
+
+
+        /*
+         * Wrapper um die jeweils geladene Slide.
+         *
+         * Dieser gesamte Bereich wird bei Bedarf skaliert.
+         */
+        #slide-content {
+            width: 100%;
+
+            transform-origin: top left;
+        }
 
 
         /* =========================================================
@@ -174,7 +194,7 @@
 
 
         /* =========================================================
-           NORMALER INHALT
+           INHALT
            ========================================================= */
 
         .content {
@@ -219,7 +239,7 @@
 
         .content img {
             max-width: 100%;
-            max-height: 320px;
+            max-height: 32vh;
 
             object-fit: contain;
         }
@@ -249,7 +269,7 @@
             display: block;
 
             max-width: 100%;
-            max-height: 300px;
+            max-height: 30vh;
 
             margin: 0 auto;
 
@@ -279,58 +299,107 @@
 
 
         /* =========================================================
-           FEHLERMELDUNGEN
+           SLIDE-METADATEN
+           ========================================================= */
+
+        /*
+         * Diese Elemente enthalten lediglich Konfiguration
+         * wie die QR-Code-URL und sollen nicht sichtbar sein.
+         */
+        .slide-meta {
+            display: none;
+        }
+
+
+        /* =========================================================
+           QR-CODE
+           ========================================================= */
+
+        #qr-area {
+            position: absolute;
+
+            right: 3vw;
+            bottom: 3vh;
+
+            z-index: 200;
+
+            display: none;
+
+            align-items: center;
+
+            gap: 1vw;
+
+            padding: 0.7vh 0.5vw;
+
+            background: #ffffff;
+        }
+
+
+        #qr-code {
+            width: 10vh;
+            height: 10vh;
+        }
+
+
+        #qr-code img,
+        #qr-code canvas {
+            display: block;
+
+            width: 10vh !important;
+            height: 10vh !important;
+        }
+
+
+        #qr-label {
+            font-size: 1.4vh;
+            line-height: 1.3;
+
+            color: #666666;
+        }
+
+
+        /* =========================================================
+           SYSTEMMELDUNGEN
            ========================================================= */
 
         .message {
-            padding-top: 100px;
+            padding-top: 10vh;
 
-            font-size: 32px;
+            font-size: 3vh;
+
             color: #555555;
         }
-		
-		/* =========================================================
-           QR
-	     ========================================================= */
-		
-		#qr-area {
-    position: absolute;
-
-    right: 3vw;
-    bottom: 3vh;
-
-    z-index: 200;
-
-    display: none;
-    align-items: center;
-
-    gap: 1vw;
-
-    padding: 0.5vh 0.5vw;
-
-    background: #ffffff;
-}
 
 
-#qr-code {
-    width: 9vh;
-    height: 9vh;
-}
+        /* =========================================================
+           DEBUG-ANZEIGE
+           ========================================================= */
 
+        /*
+         * Vorübergehend eingebaut, damit wir sehen können,
+         * welchen Viewport der iiSignage-Browser tatsächlich meldet.
+         *
+         * Kann später komplett entfernt werden.
+         */
+        #debug-info {
+            position: fixed;
 
-#qr-code img,
-#qr-code canvas {
-    width: 9vh !important;
-    height: 9vh !important;
-}
+            left: 8px;
+            bottom: 8px;
 
+            z-index: 99999;
 
-#qr-label {
-    font-size: 1.4vh;
-    line-height: 1.25;
+            padding: 6px 8px;
 
-    color: #666666;
-}
+            background: rgba(255, 255, 255, 0.85);
+
+            color: #000000;
+
+            font-size: 12px;
+            line-height: 1.3;
+
+            pointer-events: none;
+        }
 
     </style>
 
@@ -356,15 +425,16 @@
 
         <img
             id="logo"
-            src="assets/logo.png"
+            src="assets/e3dc-logo.png"
             alt="E3/DC"
         >
 
     </header>
 
 
+
     <!-- =========================================================
-         HIER WIRD DIE AKTUELLE SLIDE GELADEN
+         SLIDE
          ========================================================= -->
 
     <main id="slide-container">
@@ -374,22 +444,44 @@
         </div>
 
     </main>
-	
-	<div id="qr-area">
 
-    <div id="qr-code"></div>
 
-    <div id="qr-label">
-        Mehr erfahren<br>
-        Learn more
+
+    <!-- =========================================================
+         QR-CODE
+         ========================================================= -->
+
+    <div id="qr-area">
+
+        <div id="qr-code"></div>
+
+        <div id="qr-label">
+            Mehr erfahren:<br>
+            Learn more:
+        </div>
+
     </div>
 
-</div>
+
+
+    <!-- =========================================================
+         DEBUG-INFORMATIONEN
+         ========================================================= -->
+
+    <div id="debug-info"></div>
 
 
 </div>
+
+
+
+<!-- =============================================================
+     QR-CODE BIBLIOTHEK
+     ============================================================= -->
 
 <script src="assets/qrcode.min.js"></script>
+
+
 
 <script>
 
@@ -397,28 +489,7 @@
        KONFIGURATION
        ============================================================= */
 
-
-    /*
-     * Dauer einer Slide in Millisekunden.
-     *
-     * 30.000 ms = 30 Sekunden
-     */
     const slideDuration = 30000;
-
-
-    /*
-     * Maximale Basis-Schriftgröße.
-     */
-    const maximumFontSize = 28;
-
-
-    /*
-     * Kleinste erlaubte Schriftgröße.
-     *
-     * Wenn der Inhalt selbst damit nicht hineinpasst,
-     * wird nicht weiter verkleinert.
-     */
-    const minimumFontSize = 12;
 
 
 
@@ -432,11 +503,6 @@
 
     let slideTimer = null;
 
-
-    /*
-     * Verhindert, dass bei sehr schnellem Wechseln
-     * eine ältere Ladeanfrage später eine neuere überschreibt.
-     */
     let loadVersion = 0;
 
 
@@ -448,7 +514,9 @@
     async function loadSlideList() {
 
         const container =
-            document.getElementById("slide-container");
+            document.getElementById(
+                "slide-container"
+            );
 
 
         try {
@@ -498,9 +566,10 @@
             /*
              * Beim Start eine zufällige Slide auswählen.
              */
-            const firstSlide = Math.floor(
-                Math.random() * slides.length
-            );
+            const firstSlide =
+                Math.floor(
+                    Math.random() * slides.length
+                );
 
 
             await showSlide(firstSlide);
@@ -511,8 +580,8 @@
              */
             startTimer();
 
-
         }
+
         catch (error) {
 
             console.error(error);
@@ -542,7 +611,7 @@
 
 
         /*
-         * Hinter der letzten Slide wieder zur ersten.
+         * Nach der letzten Slide wieder zur ersten.
          */
         if (index >= slides.length) {
             index = 0;
@@ -557,7 +626,8 @@
         }
 
 
-        const thisLoadVersion = ++loadVersion;
+        const thisLoadVersion =
+            ++loadVersion;
 
 
         try {
@@ -580,15 +650,20 @@
             }
 
 
-            const html = await response.text();
+            const html =
+                await response.text();
 
 
             /*
-             * Falls zwischenzeitlich bereits eine andere Slide
-             * angefordert wurde, diese Antwort ignorieren.
+             * Falls zwischenzeitlich bereits eine andere
+             * Slide angefordert wurde, diese Antwort ignorieren.
              */
-            if (thisLoadVersion !== loadVersion) {
+            if (
+                thisLoadVersion !== loadVersion
+            ) {
+
                 return;
+
             }
 
 
@@ -602,29 +677,38 @@
 
 
             /*
-             * Zunächst immer wieder die maximale Schriftgröße setzen.
+             * Slide in einen Wrapper setzen.
              *
-             * Wichtig, weil die vorherige Slide eventuell
-             * automatisch verkleinert wurde.
+             * Der gesamte Wrapper kann anschließend
+             * proportional skaliert werden.
              */
-            container.style.fontSize =
-                maximumFontSize + "px";
+            container.innerHTML = `
+                <div id="slide-content">
+                    ${html}
+                </div>
+            `;
 
 
             /*
-             * Neue Slide einsetzen.
+             * QR-Code erzeugen.
              */
-            container.innerHTML = html;
+            updateQRCode();
 
-			updateQRCode();
 
             /*
-             * Anschließend prüfen, ob alles hineinpasst.
+             * Anschließend prüfen,
+             * ob die Slide vollständig hineinpasst.
              */
             await fitSlide();
 
 
+            /*
+             * Debug-Anzeige aktualisieren.
+             */
+            updateDebugInfo();
+
         }
+
         catch (error) {
 
             console.error(error);
@@ -645,7 +729,7 @@
 
 
     /* =============================================================
-       AUTOMATISCHE SCHRIFTGRÖSSE
+       SLIDE AUTOMATISCH EINPASSEN
        ============================================================= */
 
     async function fitSlide() {
@@ -656,42 +740,43 @@
             );
 
 
+        const content =
+            document.getElementById(
+                "slide-content"
+            );
+
+
+        if (!content) {
+            return;
+        }
+
+
         /*
-         * Erst mit maximaler Größe beginnen.
+         * Vor dem Messen immer wieder
+         * auf Originalgröße zurücksetzen.
          */
-        let fontSize = maximumFontSize;
-
-
-        container.style.fontSize =
-            fontSize + "px";
+        content.style.transform =
+            "scale(1)";
 
 
         /*
-         * Bilder können die endgültige Größe des Inhalts verändern.
-         *
-         * Deshalb warten wir zunächst,
-         * bis alle Bilder der aktuellen Slide geladen wurden.
+         * Auf Bilder innerhalb der Slide warten.
          */
         const images =
-            container.querySelectorAll("img");
+            content.querySelectorAll("img");
 
 
         await Promise.all(
 
             Array.from(images).map(image => {
 
-                /*
-                 * Bild ist bereits geladen.
-                 */
                 if (image.complete) {
+
                     return Promise.resolve();
+
                 }
 
 
-                /*
-                 * Warten bis das Bild entweder geladen wurde
-                 * oder ein Fehler auftritt.
-                 */
                 return new Promise(resolve => {
 
                     image.addEventListener(
@@ -719,16 +804,18 @@
 
 
         /*
-         * Einen Render-Zyklus warten.
+         * Zwei Browser-Renderzyklen warten.
          *
-         * Dadurch kennt der Browser nach dem Laden der Bilder
-         * die endgültige Größe des Inhalts.
+         * Dadurch stellen wir sicher, dass Größen,
+         * Zeilenumbrüche und Bilder final berechnet wurden.
          */
         await new Promise(resolve => {
 
             requestAnimationFrame(() => {
 
-                requestAnimationFrame(resolve);
+                requestAnimationFrame(
+                    resolve
+                );
 
             });
 
@@ -736,46 +823,101 @@
 
 
         /*
-         * Schrift schrittweise verkleinern,
-         * bis der gesamte Inhalt sichtbar ist.
+         * Padding des Containers bestimmen.
          */
-        while (
-            contentDoesNotFit(container)
-            &&
-            fontSize > minimumFontSize
-        ) {
+        const style =
+            getComputedStyle(container);
 
-            fontSize--;
 
-            container.style.fontSize =
-                fontSize + "px";
+        const horizontalPadding =
+            parseFloat(style.paddingLeft) +
+            parseFloat(style.paddingRight);
+
+
+        const verticalPadding =
+            parseFloat(style.paddingTop) +
+            parseFloat(style.paddingBottom);
+
+
+        /*
+         * Tatsächlich verfügbarer sichtbarer Bereich.
+         */
+        const availableWidth =
+            container.clientWidth -
+            horizontalPadding;
+
+
+        const availableHeight =
+            container.clientHeight -
+            verticalPadding;
+
+
+        /*
+         * Tatsächliche Größe des Slide-Inhalts.
+         */
+        const contentWidth =
+            content.scrollWidth;
+
+
+        const contentHeight =
+            content.scrollHeight;
+
+
+        /*
+         * Skalierungsfaktor bestimmen.
+         *
+         * Nie größer als 1.
+         * Slides werden also nicht künstlich vergrößert.
+         */
+        let scale =
+            Math.min(
+                1,
+                availableWidth / contentWidth,
+                availableHeight / contentHeight
+            );
+
+
+        /*
+         * Kleiner Sicherheitspuffer.
+         *
+         * Gerade eingebettete Browser auf Signage-Geräten
+         * können bei Berechnungen Rundungsabweichungen haben.
+         */
+        if (scale < 1) {
+
+            scale *= 0.95;
 
         }
 
 
         /*
-         * Falls selbst die Mindestgröße noch nicht ausreicht,
-         * bleibt sie erhalten.
-         *
-         * Die Slide enthält dann schlicht zu viel Inhalt.
+         * Slide skalieren.
          */
-        if (contentDoesNotFit(container)) {
-
-            console.warn(
-                "Slide passt auch mit "
-                + minimumFontSize
-                + "px nicht vollständig auf den Bildschirm:",
-                slides[currentSlide]
-            );
-
-        }
+        content.style.transform =
+            `scale(${scale})`;
 
 
         console.log(
             "Slide:",
             slides[currentSlide],
-            "Schriftgröße:",
-            fontSize + "px"
+
+            "Viewport:",
+            window.innerWidth
+            + "x"
+            + window.innerHeight,
+
+            "Content:",
+            contentWidth
+            + "x"
+            + contentHeight,
+
+            "Available:",
+            availableWidth
+            + "x"
+            + availableHeight,
+
+            "Scale:",
+            scale
         );
 
     }
@@ -783,17 +925,105 @@
 
 
     /* =============================================================
-       PRÜFEN, OB DER INHALT HINEINPASST
+       QR-CODE
        ============================================================= */
 
-    function contentDoesNotFit(container) {
+    function updateQRCode() {
 
-        return (
-            container.scrollHeight >
-            container.clientHeight
-            ||
-            container.scrollWidth >
-            container.clientWidth
+        const qrArea =
+            document.getElementById(
+                "qr-area"
+            );
+
+
+        const qrContainer =
+            document.getElementById(
+                "qr-code"
+            );
+
+
+        const slideContainer =
+            document.getElementById(
+                "slide-container"
+            );
+
+
+        /*
+         * Eventuellen vorherigen QR-Code entfernen.
+         */
+        qrContainer.innerHTML = "";
+
+
+        /*
+         * Metadaten der aktuellen Slide suchen.
+         */
+        const metadata =
+            slideContainer.querySelector(
+                ".slide-meta"
+            );
+
+
+        /*
+         * Keine Metadaten vorhanden.
+         */
+        if (!metadata) {
+
+            qrArea.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        /*
+         * URL auslesen.
+         */
+        const url =
+            metadata.dataset.qrUrl;
+
+
+        /*
+         * Keine URL angegeben.
+         */
+        if (!url) {
+
+            qrArea.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        /*
+         * QR-Bereich anzeigen.
+         */
+        qrArea.style.display =
+            "flex";
+
+
+        /*
+         * QR-Code erzeugen.
+         *
+         * Intern wird eine höhere Auflösung verwendet.
+         * CSS skaliert ihn anschließend auf die
+         * gewünschte Bildschirmgröße.
+         */
+        new QRCode(
+            qrContainer,
+            {
+                text: url,
+
+                width: 300,
+                height: 300,
+
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+
+                correctLevel:
+                    QRCode.CorrectLevel.H
+            }
         );
 
     }
@@ -801,17 +1031,19 @@
 
 
     /* =============================================================
-       ZUFÄLLIGE SLIDE BESTIMMEN
+       ZUFÄLLIGE SLIDE
        ============================================================= */
 
     function getRandomSlide() {
 
         /*
-         * Gibt es nur eine Slide,
-         * muss diese wieder angezeigt werden.
+         * Bei nur einer Slide kann keine andere
+         * ausgewählt werden.
          */
         if (slides.length <= 1) {
+
             return 0;
+
         }
 
 
@@ -824,11 +1056,14 @@
          */
         do {
 
-            nextSlide = Math.floor(
-                Math.random() * slides.length
-            );
+            nextSlide =
+                Math.floor(
+                    Math.random()
+                    * slides.length
+                );
 
         }
+
         while (
             nextSlide === currentSlide
         );
@@ -840,17 +1075,15 @@
 
 
 
-    /* =============================================================
-       ZUFÄLLIGE SLIDE ANZEIGEN
-       ============================================================= */
-
     async function showRandomSlide() {
 
         const nextSlide =
             getRandomSlide();
 
 
-        await showSlide(nextSlide);
+        await showSlide(
+            nextSlide
+        );
 
     }
 
@@ -862,37 +1095,34 @@
 
     function startTimer() {
 
-        /*
-         * Vorherigen Timer beenden.
-         */
         if (slideTimer !== null) {
 
-            clearInterval(slideTimer);
+            clearInterval(
+                slideTimer
+            );
 
         }
 
 
-        /*
-         * Neuen 30-Sekunden-Timer starten.
-         */
-        slideTimer = setInterval(
+        slideTimer =
+            setInterval(
 
-            () => {
+                () => {
 
-                showRandomSlide();
+                    showRandomSlide();
 
-            },
+                },
 
-            slideDuration
+                slideDuration
 
-        );
+            );
 
     }
 
 
 
     /* =============================================================
-       NÄCHSTE SLIDE
+       MANUELLE NAVIGATION
        ============================================================= */
 
     async function nextSlide() {
@@ -903,18 +1133,14 @@
 
 
         /*
-         * Nach manueller Bedienung beginnen
-         * die 30 Sekunden wieder von vorne.
+         * Nach manueller Navigation
+         * beginnen die 30 Sekunden neu.
          */
         startTimer();
 
     }
 
 
-
-    /* =============================================================
-       VORHERIGE SLIDE
-       ============================================================= */
 
     async function previousSlide() {
 
@@ -923,10 +1149,6 @@
         );
 
 
-        /*
-         * Nach manueller Bedienung beginnen
-         * die 30 Sekunden wieder von vorne.
-         */
         startTimer();
 
     }
@@ -944,10 +1166,12 @@
         event => {
 
             /*
-             * Pfeil nach rechts:
-             * nächste Slide
+             * Pfeil nach rechts
              */
-            if (event.key === "ArrowRight") {
+            if (
+                event.key ===
+                "ArrowRight"
+            ) {
 
                 event.preventDefault();
 
@@ -957,10 +1181,12 @@
 
 
             /*
-             * Pfeil nach links:
-             * vorherige Slide
+             * Pfeil nach links
              */
-            else if (event.key === "ArrowLeft") {
+            else if (
+                event.key ===
+                "ArrowLeft"
+            ) {
 
                 event.preventDefault();
 
@@ -971,96 +1197,63 @@
         }
 
     );
-	
-	    /* =============================================================
-       QR
+
+
+
+    /* =============================================================
+       DEBUG-INFORMATIONEN
        ============================================================= */
-	
-	function updateQRCode() {
 
-    const qrArea =
-        document.getElementById("qr-area");
+    function updateDebugInfo() {
 
-    const qrContainer =
-        document.getElementById("qr-code");
-
-    const slideContainer =
-        document.getElementById("slide-container");
+        const debug =
+            document.getElementById(
+                "debug-info"
+            );
 
 
-    /*
-     * Metadaten der aktuellen Slide suchen.
-     */
-    const metadata =
-        slideContainer.querySelector(".slide-meta");
+        debug.innerHTML =
+            "Viewport: "
+            + window.innerWidth
+            + " × "
+            + window.innerHeight
 
+            + " | Screen: "
+            + window.screen.width
+            + " × "
+            + window.screen.height
 
-    /*
-     * Alten QR-Code entfernen.
-     */
-    qrContainer.innerHTML = "";
+            + " | DPR: "
+            + window.devicePixelRatio;
 
-
-    /*
-     * Keine Metadaten vorhanden?
-     * Dann QR-Bereich ausblenden.
-     */
-    if (!metadata) {
-
-        qrArea.style.display = "none";
-
-        return;
     }
 
 
-    /*
-     * URL auslesen.
-     */
-    const url =
-        metadata.dataset.qrUrl;
 
+    /* =============================================================
+       ÄNDERUNG DER BROWSERGRÖSSE
+       ============================================================= */
 
-    /*
-     * Keine URL eingetragen?
-     */
-    if (!url) {
+    window.addEventListener(
+        "resize",
+        async () => {
 
-        qrArea.style.display = "none";
+            updateDebugInfo();
 
-        return;
-    }
+            await fitSlide();
 
-
-    /*
-     * QR-Bereich anzeigen.
-     */
-    qrArea.style.display = "flex";
-
-
-    /*
-     * QR-Code erzeugen.
-     */
-    new QRCode(
-        qrContainer,
-        {
-            text: url,
-            width: 280,
-            height: 280,
-
-            correctLevel:
-                QRCode.CorrectLevel.H
         }
     );
 
-}
 
 
     /* =============================================================
        START
        ============================================================= */
 
+    updateDebugInfo();
+
     loadSlideList();
-	scaleScreen();
 
 
 </script>
