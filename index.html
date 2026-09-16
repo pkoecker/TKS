@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -8,407 +10,934 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Good to know...</title>
+    <title>E3/DC – Did you know?</title>
+
 
     <style>
+
+        /* =========================================================
+           GRUNDEINSTELLUNGEN
+           ========================================================= */
+
         * {
             box-sizing: border-box;
         }
 
         html,
         body {
-            width: 100%;
-            height: 100%;
             margin: 0;
             padding: 0;
+
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            background: #ffffff;
+            color: #1a1a1a;
+        }
+
+
+        /* =========================================================
+           GESAMTER 1920x1080 BILDSCHIRM
+           ========================================================= */
+
+        #screen {
+            position: relative;
+
+            width: 1920px;
+            height: 1080px;
+
+            background: #ffffff;
+
             overflow: hidden;
         }
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #ffffff;
-            color: #222222;
-        }
 
-        .slide {
-            display: none;
-            width: 1920px;
-            height: 1080px;
-            padding: 60px 90px;
+        /* =========================================================
+           HEADER
+           ========================================================= */
+
+        #header {
             position: absolute;
+
             top: 0;
             left: 0;
-            background: #ffffff;
+
+            width: 100%;
+            height: 120px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 25px 70px 20px 55px;
+
+            z-index: 100;
         }
 
-        .slide.active {
-            display: block;
+
+        /* "Did you know...?" */
+
+        #did-you-know {
+            font-size: 32px;
+            font-weight: 600;
+
+            color: #555555;
         }
 
-        .logo {
-            position: absolute;
-            top: 50px;
-            right: 70px;
+
+        /* E3/DC Logo */
+
+        #logo {
             width: 220px;
             height: auto;
-        }
 
-        .language-section {
-            width: 100%;
-            padding-right: 280px;
-        }
-
-        .german {
-            margin-top: 40px;
-            margin-bottom: 55px;
-        }
-
-        .english {
-            border-top: 2px solid #dddddd;
-            padding-top: 45px;
-        }
-
-        h1 {
-            margin: 0 0 25px 0;
-            font-size: 54px;
-            line-height: 1.15;
-        }
-
-        h2 {
-            margin: 0 0 25px 0;
-            font-size: 42px;
-            line-height: 1.15;
-        }
-
-        .content {
-            font-size: 32px;
-            line-height: 1.45;
-        }
-
-        .content p {
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-
-        .content ul {
-            margin-top: 15px;
-        }
-
-        .content img {
-            max-width: 700px;
-            max-height: 330px;
             object-fit: contain;
         }
 
+
+        /* =========================================================
+           SLIDE-BEREICH
+           ========================================================= */
+
+        #slide-container {
+            position: absolute;
+
+            top: 120px;
+            left: 0;
+
+            width: 100%;
+            height: 960px;
+
+            padding:
+                0
+                90px
+                55px
+                82px;
+
+            overflow: hidden;
+
+            /*
+             * Diese Größe ist die maximale Basis-Schriftgröße.
+             * JavaScript reduziert sie automatisch,
+             * wenn der Inhalt nicht auf den Bildschirm passt.
+             */
+            font-size: 32px;
+        }
+
+
+        /* =========================================================
+           DEUTSCHER BEREICH
+           ========================================================= */
+
+        .german {
+            margin-bottom: 1.45em;
+        }
+
+
+        /* =========================================================
+           ENGLISCHER BEREICH
+           ========================================================= */
+
+        .english {
+            border-top: 2px solid #dddddd;
+
+            padding-top: 1.2em;
+        }
+
+
+        /* =========================================================
+           ÜBERSCHRIFTEN
+           ========================================================= */
+
+        h1 {
+            margin:
+                0
+                0
+                0.55em
+                0;
+
+            font-size: 1.65em;
+            line-height: 1.15;
+
+            font-weight: 700;
+        }
+
+
+        h2 {
+            margin:
+                0
+                0
+                0.55em
+                0;
+
+            font-size: 1.35em;
+            line-height: 1.15;
+
+            font-weight: 700;
+        }
+
+
+        /* =========================================================
+           NORMALER INHALT
+           ========================================================= */
+
+        .content {
+            font-size: 1em;
+            line-height: 1.4;
+        }
+
+
+        .content p {
+            margin:
+                0
+                0
+                0.65em
+                0;
+        }
+
+
+        /* =========================================================
+           LISTEN
+           ========================================================= */
+
+        .content ul,
+        .content ol {
+            margin:
+                0.35em
+                0
+                0.7em
+                0;
+
+            padding-left: 1.2em;
+        }
+
+
+        .content li {
+            margin-bottom: 0.15em;
+        }
+
+
+        /* =========================================================
+           BILDER
+           ========================================================= */
+
+        .content img {
+            max-width: 100%;
+            max-height: 320px;
+
+            object-fit: contain;
+        }
+
+
+        /* =========================================================
+           ZWEISPALTIGES LAYOUT
+           ========================================================= */
+
         .two-columns {
             display: flex;
-            gap: 60px;
+
+            gap: 2em;
+
             align-items: center;
         }
 
+
         .two-columns > div {
             flex: 1;
+
+            min-width: 0;
         }
-		.did-you-know {
-    position: fixed;
-    top: 35px;
-    left: 60px;
-    z-index: 1000;
 
-    font-size: 32px;
-    font-weight: 600;
 
-    color: #555555;
-}
+        .two-columns img {
+            display: block;
+
+            max-width: 100%;
+            max-height: 300px;
+
+            margin: 0 auto;
+
+            object-fit: contain;
+        }
+
+
+        /* =========================================================
+           TABELLEN
+           ========================================================= */
+
+        .content table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+
+        .content th,
+        .content td {
+            padding: 0.35em 0.5em;
+
+            border-bottom: 1px solid #dddddd;
+
+            text-align: left;
+        }
+
+
+        /* =========================================================
+           FEHLERMELDUNGEN
+           ========================================================= */
+
+        .message {
+            padding-top: 100px;
+
+            font-size: 32px;
+            color: #555555;
+        }
+
     </style>
+
 </head>
 
+
 <body>
-	<div class="did-you-know">Did you know...?</div>
 
-    <!-- SLIDE 1 -->
 
-    <section class="slide">
+<div id="screen">
+
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <header id="header">
+
+        <div id="did-you-know">
+            Did you know...?
+        </div>
+
 
         <img
-            class="logo"
-            src="assets/logo.png"
+            id="logo"
+            src="assets/e3dc-logo.png"
             alt="E3/DC"
         >
 
-        <div class="language-section german">
+    </header>
 
-            <h1>CAN Bus – schnell, robust und zuverlässig</h1>
 
-            <div class="content">
-                <p>
-					CAN verbindet zentrale Komponenten innerhalb eines E3/DC Systems,
-					zum Beispiel Wechselrichter, Leistungsmesser und Batteriemanagementsysteme.
-				</p>
+    <!-- =========================================================
+         HIER WIRD DIE AKTUELLE SLIDE GELADEN
+         ========================================================= -->
 
-				<ul>
-					<li>Sehr schnelle und deterministische Kommunikation</li>
-					<li>Alle Geräte empfangen Nachrichten und reagieren auf relevante Message IDs</li>
-					<li>Hohe Zuverlässigkeit durch Bestätigung und automatische Wiederholung</li>
-					<li>Ideal für zeitkritische Kommunikation zwischen Geräten</li>
-				</ul>
-            </div>
+    <main id="slide-container">
 
+        <div class="message">
+            Slide wird geladen...
         </div>
 
-        <div class="language-section english">
-
-            <h2>CAN Bus – fast, robust and reliable</h2>
-
-            <div class="content">
-                <p>
-					CAN connects core components within an E3/DC system,
-					such as inverters, power meters and battery management systems.
-				</p>
-
-				<ul>
-					<li>Fast and deterministic communication</li>
-					<li>All devices receive messages and react to relevant message IDs</li>
-					<li>High reliability through acknowledgement and automatic retransmission</li>
-					<li>Ideal for time-critical device communication</li>
-				</ul>
-            </div>
-
-        </div>
-
-    </section>
+    </main>
 
 
-    <!-- SLIDE 2 -->
-
-    <section class="slide">
-
-        <img
-            class="logo"
-            src="assets/logo.png"
-            alt="E3/DC"
-        >
-
-        <div class="language-section german">
-
-            <h1>Modbus TCP – Geräteintegration über Ethernet</h1>
-
-            <div class="content two-columns">
-
-                <div>
-                    <p>
-						Modbus TCP ermöglicht die Kommunikation mit Geräten über ein
-						normales IP-Netzwerk und wird bei E3/DC für verschiedene externe
-						Komponenten eingesetzt.
-					</p>
-
-					<ul>
-						<li>Client-Server-Kommunikation über TCP/IP</li>
-						<li>Daten werden über sogenannte Register gelesen und geschrieben</li>
-						<li>Bei E3/DC unter anderem für Wallboxen und Leistungsmesser</li>
-						<li>Einfach und weit verbreitet, aber ohne integrierte Verschlüsselung</li>
-					</ul>
-                </div>
-
-                <div>
-                    <img
-                        src="assets/slide1-image.jpg"
-                        alt=""
-                    >
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="language-section english">
-
-            <h2>Modbus TCP – device integration via Ethernet</h2>
-
-            <div class="content">
-                <p>
-					Modbus TCP enables communication with devices over standard
-					IP networks and is used to integrate various external components
-					into E3/DC systems.
-				</p>
-
-				<ul>
-					<li>Client-server communication over TCP/IP</li>
-					<li>Data is read and written using registers</li>
-					<li>Used by E3/DC for devices such as wallboxes and power meters</li>
-					<li>Simple and widely supported, but without built-in encryption</li>
-				</ul>
-            </div>
-
-        </div>
-
-    </section>
+</div>
 
 
-    <!-- SLIDE 3 -->
 
-    <section class="slide">
+<script>
 
-        <img
-            class="logo"
-            src="assets/logo.png"
-            alt="E3/DC"
-        >
-
-        <div class="language-section german">
-
-            <h1>EEBus – wenn Energiesysteme miteinander sprechen</h1>
-
-            <div class="content">
-                <p>
-					EEBus verbindet unterschiedliche Energiesysteme über standardisierte
-					Datenmodelle – unabhängig davon, von welchem Hersteller die Geräte stammen.
-				</p>
-
-				<ul>
-					<li>Für PV, Batteriespeicher, Wallboxen, Haushaltsgeräte und weitere Energiesysteme</li>
-					<li>Strukturierte und semantisch beschriebene Daten statt einfacher Register</li>
-					<li>Verschlüsselte und zertifikatsbasierte Kommunikation</li>
-					<li>Bei qntm wichtig für die Kommunikation mit Smart Meter Gateways</li>
-				</ul>
-            </div>
-
-        </div>
-
-        <div class="language-section english">
-
-            <h2>EEBus – when energy systems talk to each other</h2>
-
-            <div class="content">
-                <p>
-					EEBus connects different energy systems using standardized
-					data models – independent of the device manufacturer.
-				</p>
-
-				<ul>
-					<li>Designed for PV, battery storage, EV chargers, appliances and other energy systems</li>
-					<li>Structured and semantic data instead of simple registers</li>
-					<li>Encrypted and certificate-based communication</li>
-					<li>Important for qntm communication with smart meter gateways</li>
-				</ul>
-            </div>
-
-        </div>
-
-    </section>
+    /* =============================================================
+       KONFIGURATION
+       ============================================================= */
 
 
-    <script>
-
-    const slides = document.querySelectorAll(".slide");
-
+    /*
+     * Dauer einer Slide in Millisekunden.
+     *
+     * 30.000 ms = 30 Sekunden
+     */
     const slideDuration = 30000;
 
-    let currentSlide = 0;
-    let slideTimer;
+
+    /*
+     * Maximale Basis-Schriftgröße.
+     */
+    const maximumFontSize = 32;
 
 
-    function showSlide(index) {
+    /*
+     * Kleinste erlaubte Schriftgröße.
+     *
+     * Wenn der Inhalt selbst damit nicht hineinpasst,
+     * wird nicht weiter verkleinert.
+     */
+    const minimumFontSize = 22;
 
-        slides.forEach(slide => {
-            slide.classList.remove("active");
-        });
 
-        // Wenn wir hinter die letzte Slide gehen,
-        // springen wir wieder zur ersten.
+
+    /* =============================================================
+       STATUS
+       ============================================================= */
+
+    let slides = [];
+
+    let currentSlide = -1;
+
+    let slideTimer = null;
+
+
+    /*
+     * Verhindert, dass bei sehr schnellem Wechseln
+     * eine ältere Ladeanfrage später eine neuere überschreibt.
+     */
+    let loadVersion = 0;
+
+
+
+    /* =============================================================
+       SLIDE-LISTE LADEN
+       ============================================================= */
+
+    async function loadSlideList() {
+
+        const container =
+            document.getElementById("slide-container");
+
+
+        try {
+
+            const response = await fetch(
+                "slides.json",
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "slides.json konnte nicht geladen werden."
+                );
+
+            }
+
+
+            slides = await response.json();
+
+
+            if (!Array.isArray(slides)) {
+
+                throw new Error(
+                    "slides.json enthält keine gültige Liste."
+                );
+
+            }
+
+
+            if (slides.length === 0) {
+
+                container.innerHTML = `
+                    <div class="message">
+                        Keine Slides vorhanden.
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            /*
+             * Beim Start eine zufällige Slide auswählen.
+             */
+            const firstSlide = Math.floor(
+                Math.random() * slides.length
+            );
+
+
+            await showSlide(firstSlide);
+
+
+            /*
+             * Automatischen Wechsel starten.
+             */
+            startTimer();
+
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+
+            container.innerHTML = `
+                <div class="message">
+                    Die Slides konnten nicht geladen werden.
+                </div>
+            `;
+
+        }
+
+    }
+
+
+
+    /* =============================================================
+       EINZELNE SLIDE LADEN
+       ============================================================= */
+
+    async function showSlide(index) {
+
+        if (slides.length === 0) {
+            return;
+        }
+
+
+        /*
+         * Hinter der letzten Slide wieder zur ersten.
+         */
         if (index >= slides.length) {
             index = 0;
         }
 
-        // Wenn wir vor die erste Slide gehen,
-        // springen wir zur letzten.
+
+        /*
+         * Vor der ersten Slide wieder zur letzten.
+         */
         if (index < 0) {
             index = slides.length - 1;
         }
 
-        currentSlide = index;
 
-        slides[currentSlide]
-            .classList
-            .add("active");
+        const thisLoadVersion = ++loadVersion;
+
+
+        try {
+
+            const response = await fetch(
+                slides[index],
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Slide konnte nicht geladen werden: "
+                    + slides[index]
+                );
+
+            }
+
+
+            const html = await response.text();
+
+
+            /*
+             * Falls zwischenzeitlich bereits eine andere Slide
+             * angefordert wurde, diese Antwort ignorieren.
+             */
+            if (thisLoadVersion !== loadVersion) {
+                return;
+            }
+
+
+            currentSlide = index;
+
+
+            const container =
+                document.getElementById(
+                    "slide-container"
+                );
+
+
+            /*
+             * Zunächst immer wieder die maximale Schriftgröße setzen.
+             *
+             * Wichtig, weil die vorherige Slide eventuell
+             * automatisch verkleinert wurde.
+             */
+            container.style.fontSize =
+                maximumFontSize + "px";
+
+
+            /*
+             * Neue Slide einsetzen.
+             */
+            container.innerHTML = html;
+
+
+            /*
+             * Anschließend prüfen, ob alles hineinpasst.
+             */
+            await fitSlide();
+
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+
+            document.getElementById(
+                "slide-container"
+            ).innerHTML = `
+                <div class="message">
+                    Diese Slide konnte nicht geladen werden.
+                </div>
+            `;
+
+        }
+
     }
 
 
+
+    /* =============================================================
+       AUTOMATISCHE SCHRIFTGRÖSSE
+       ============================================================= */
+
+    async function fitSlide() {
+
+        const container =
+            document.getElementById(
+                "slide-container"
+            );
+
+
+        /*
+         * Erst mit maximaler Größe beginnen.
+         */
+        let fontSize = maximumFontSize;
+
+
+        container.style.fontSize =
+            fontSize + "px";
+
+
+        /*
+         * Bilder können die endgültige Größe des Inhalts verändern.
+         *
+         * Deshalb warten wir zunächst,
+         * bis alle Bilder der aktuellen Slide geladen wurden.
+         */
+        const images =
+            container.querySelectorAll("img");
+
+
+        await Promise.all(
+
+            Array.from(images).map(image => {
+
+                /*
+                 * Bild ist bereits geladen.
+                 */
+                if (image.complete) {
+                    return Promise.resolve();
+                }
+
+
+                /*
+                 * Warten bis das Bild entweder geladen wurde
+                 * oder ein Fehler auftritt.
+                 */
+                return new Promise(resolve => {
+
+                    image.addEventListener(
+                        "load",
+                        resolve,
+                        {
+                            once: true
+                        }
+                    );
+
+
+                    image.addEventListener(
+                        "error",
+                        resolve,
+                        {
+                            once: true
+                        }
+                    );
+
+                });
+
+            })
+
+        );
+
+
+        /*
+         * Einen Render-Zyklus warten.
+         *
+         * Dadurch kennt der Browser nach dem Laden der Bilder
+         * die endgültige Größe des Inhalts.
+         */
+        await new Promise(resolve => {
+
+            requestAnimationFrame(() => {
+
+                requestAnimationFrame(resolve);
+
+            });
+
+        });
+
+
+        /*
+         * Schrift schrittweise verkleinern,
+         * bis der gesamte Inhalt sichtbar ist.
+         */
+        while (
+            contentDoesNotFit(container)
+            &&
+            fontSize > minimumFontSize
+        ) {
+
+            fontSize--;
+
+            container.style.fontSize =
+                fontSize + "px";
+
+        }
+
+
+        /*
+         * Falls selbst die Mindestgröße noch nicht ausreicht,
+         * bleibt sie erhalten.
+         *
+         * Die Slide enthält dann schlicht zu viel Inhalt.
+         */
+        if (contentDoesNotFit(container)) {
+
+            console.warn(
+                "Slide passt auch mit "
+                + minimumFontSize
+                + "px nicht vollständig auf den Bildschirm:",
+                slides[currentSlide]
+            );
+
+        }
+
+
+        console.log(
+            "Slide:",
+            slides[currentSlide],
+            "Schriftgröße:",
+            fontSize + "px"
+        );
+
+    }
+
+
+
+    /* =============================================================
+       PRÜFEN, OB DER INHALT HINEINPASST
+       ============================================================= */
+
+    function contentDoesNotFit(container) {
+
+        return (
+            container.scrollHeight >
+            container.clientHeight
+            ||
+            container.scrollWidth >
+            container.clientWidth
+        );
+
+    }
+
+
+
+    /* =============================================================
+       ZUFÄLLIGE SLIDE BESTIMMEN
+       ============================================================= */
+
     function getRandomSlide() {
 
+        /*
+         * Gibt es nur eine Slide,
+         * muss diese wieder angezeigt werden.
+         */
         if (slides.length <= 1) {
             return 0;
         }
 
+
         let nextSlide;
 
+
+        /*
+         * So lange würfeln,
+         * bis eine andere Slide gefunden wurde.
+         */
         do {
+
             nextSlide = Math.floor(
                 Math.random() * slides.length
             );
+
         }
-        while (nextSlide === currentSlide);
+        while (
+            nextSlide === currentSlide
+        );
+
 
         return nextSlide;
+
     }
 
 
-    function showRandomSlide() {
 
-        const nextSlide = getRandomSlide();
+    /* =============================================================
+       ZUFÄLLIGE SLIDE ANZEIGEN
+       ============================================================= */
 
-        showSlide(nextSlide);
+    async function showRandomSlide() {
+
+        const nextSlide =
+            getRandomSlide();
+
+
+        await showSlide(nextSlide);
+
     }
 
+
+
+    /* =============================================================
+       TIMER
+       ============================================================= */
 
     function startTimer() {
 
-        clearInterval(slideTimer);
+        /*
+         * Vorherigen Timer beenden.
+         */
+        if (slideTimer !== null) {
 
-        slideTimer = setInterval(() => {
-            showRandomSlide();
-        }, slideDuration);
-    }
+            clearInterval(slideTimer);
 
-
-    function nextSlide() {
-
-        showSlide(currentSlide + 1);
-
-        startTimer();
-    }
-
-
-    function previousSlide() {
-
-        showSlide(currentSlide - 1);
-
-        startTimer();
-    }
-
-
-    document.addEventListener("keydown", event => {
-
-        if (event.key === "ArrowRight") {
-            nextSlide();
         }
 
-        if (event.key === "ArrowLeft") {
-            previousSlide();
+
+        /*
+         * Neuen 30-Sekunden-Timer starten.
+         */
+        slideTimer = setInterval(
+
+            () => {
+
+                showRandomSlide();
+
+            },
+
+            slideDuration
+
+        );
+
+    }
+
+
+
+    /* =============================================================
+       NÄCHSTE SLIDE
+       ============================================================= */
+
+    async function nextSlide() {
+
+        await showSlide(
+            currentSlide + 1
+        );
+
+
+        /*
+         * Nach manueller Bedienung beginnen
+         * die 30 Sekunden wieder von vorne.
+         */
+        startTimer();
+
+    }
+
+
+
+    /* =============================================================
+       VORHERIGE SLIDE
+       ============================================================= */
+
+    async function previousSlide() {
+
+        await showSlide(
+            currentSlide - 1
+        );
+
+
+        /*
+         * Nach manueller Bedienung beginnen
+         * die 30 Sekunden wieder von vorne.
+         */
+        startTimer();
+
+    }
+
+
+
+    /* =============================================================
+       TASTATURSTEUERUNG
+       ============================================================= */
+
+    document.addEventListener(
+
+        "keydown",
+
+        event => {
+
+            /*
+             * Pfeil nach rechts:
+             * nächste Slide
+             */
+            if (event.key === "ArrowRight") {
+
+                event.preventDefault();
+
+                nextSlide();
+
+            }
+
+
+            /*
+             * Pfeil nach links:
+             * vorherige Slide
+             */
+            else if (event.key === "ArrowLeft") {
+
+                event.preventDefault();
+
+                previousSlide();
+
+            }
+
         }
 
-    });
+    );
 
 
-    // Beim Start direkt eine zufällige Slide anzeigen
-    currentSlide = getRandomSlide();
 
-    showSlide(currentSlide);
+    /* =============================================================
+       START
+       ============================================================= */
 
-    // Automatischen Wechsel starten
-    startTimer();
+    loadSlideList();
+
 
 </script>
 
+
 </body>
+
 </html>
