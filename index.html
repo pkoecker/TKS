@@ -44,90 +44,81 @@
            GESAMTER 1920x1080 BILDSCHIRM
            ========================================================= */
 
-        #screen {
+#screen {
     position: relative;
 
     width: 100vw;
     height: 100vh;
 
     background: #ffffff;
-
     overflow: hidden;
 }
 
 
-        /* =========================================================
-           HEADER
-           ========================================================= */
+/* Header */
 
-        #header {
-            position: absolute;
+#header {
+    position: absolute;
 
-            top: 0;
-            left: 0;
+    top: 0;
+    left: 0;
+    right: 0;
 
-            width: 100%;
-            height: 120px;
+    height: 11vh;
 
-            display: flex;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-            align-items: center;
-            justify-content: space-between;
+    padding:
+        2vh
+        4vw
+        1vh
+        3vw;
 
-            padding: 25px 70px 20px 55px;
-
-            z-index: 100;
-        }
-
-
-        /* "Did you know...?" */
-
-        #did-you-know {
-            font-size: 32px;
-            font-weight: 600;
-
-            color: #555555;
-        }
+    z-index: 100;
+}
 
 
-        /* E3/DC Logo */
+#did-you-know {
+    font-size: 2.5vh;
+    font-weight: 600;
 
-        #logo {
-            width: 220px;
-            height: auto;
-
-            object-fit: contain;
-        }
+    color: #555555;
+}
 
 
-        /* =========================================================
-           SLIDE-BEREICH
-           ========================================================= */
+#logo {
+    width: auto;
+    height: 7vh;
 
-        #slide-container {
-            position: absolute;
+    object-fit: contain;
+}
 
-            top: 120px;
-            left: 0;
 
-            width: 100%;
-            height: 960px;
+/* Slide */
 
-            padding:
-                0
-                90px
-                55px
-                82px;
+#slide-container {
+    position: absolute;
 
-            overflow: hidden;
+    top: 11vh;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-            /*
-             * Diese Größe ist die maximale Basis-Schriftgröße.
-             * JavaScript reduziert sie automatisch,
-             * wenn der Inhalt nicht auf den Bildschirm passt.
-             */
-            font-size: 32px;
-        }
+    width: auto;
+    height: auto;
+
+    padding:
+        1vh
+        5vw
+        4vh
+        4vw;
+
+    overflow: hidden;
+
+    font-size: 32px;
+}
 
 
         /* =========================================================
@@ -303,45 +294,43 @@
 	     ========================================================= */
 		
 		#qr-area {
-			position: absolute;
+    position: absolute;
 
-			right: 55px;
-			bottom: 40px;
+    right: 3vw;
+    bottom: 3vh;
 
-			z-index: 200;
+    z-index: 200;
 
-			display: none;
+    display: none;
+    align-items: center;
 
-			align-items: center;
-			gap: 18px;
+    gap: 1vw;
 
-			padding: 12px;
+    padding: 0.5vh 0.5vw;
 
-			background: #ffffff;
-		}
-
-
-		#qr-code {
-			width: 140px;
-			height: 140px;
-		}
+    background: #ffffff;
+}
 
 
-		#qr-code img,
-		#qr-code canvas {
-			display: block;
-
-			width: 140px !important;
-			height: 140px !important;
-		}
+#qr-code {
+    width: 9vh;
+    height: 9vh;
+}
 
 
-		#qr-label {
-			font-size: 20px;
-			line-height: 1.3;
+#qr-code img,
+#qr-code canvas {
+    width: 9vh !important;
+    height: 9vh !important;
+}
 
-			color: #555555;
-		}
+
+#qr-label {
+    font-size: 1.4vh;
+    line-height: 1.25;
+
+    color: #666666;
+}
 
     </style>
 
@@ -420,7 +409,7 @@
     /*
      * Maximale Basis-Schriftgröße.
      */
-    const maximumFontSize = 32;
+    const maximumFontSize = 28;
 
 
     /*
@@ -429,7 +418,7 @@
      * Wenn der Inhalt selbst damit nicht hineinpasst,
      * wird nicht weiter verkleinert.
      */
-    const minimumFontSize = 22;
+    const minimumFontSize = 12;
 
 
 
