@@ -10,7 +10,6 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <!-- Caching möglichst vermeiden -->
     <meta
         http-equiv="Cache-Control"
         content="no-cache, no-store, must-revalidate"
@@ -139,22 +138,16 @@
 
             /*
              * iiSignage meldet:
-             *
-             * 1280 × 720 CSS-Pixel
+             * 1280 x 720 CSS-Pixel
              * DPR 3
-             *
-             * 21px entsprechen ungefähr unserer ursprünglich
-             * für Full HD gedachten 32px-Schriftgröße.
              */
             font-size: 21px;
         }
 
 
         /*
-         * Der gesamte Inhalt einer Slide wird in diesen
-         * Wrapper geladen.
-         *
-         * Falls nötig, wird dieser vollständig skaliert.
+         * Wrapper um den gesamten Inhalt
+         * der aktuellen Slide.
          */
         #slide-content {
             width: 100%;
@@ -256,14 +249,32 @@
 
 
         /* =========================================================
-           BILDER
+           BILDER ALLGEMEIN
            ========================================================= */
 
         .content img {
+            display: block;
+
+            width: auto;
+            height: auto;
+
             max-width: 100%;
-            max-height: 32vh;
+            max-height: 36vh;
 
             object-fit: contain;
+        }
+
+
+        /*
+         * Einzelne Bilder, die direkt im Content liegen,
+         * dürfen etwas größer angezeigt werden.
+         */
+        .content > img {
+            max-width: 45%;
+            max-height: 36vh;
+
+            margin-left: auto;
+            margin-right: auto;
         }
 
 
@@ -274,24 +285,61 @@
         .two-columns {
             display: flex;
 
+            width: 100%;
+
             gap: 2em;
 
             align-items: center;
         }
 
 
+        /*
+         * Standardverhalten:
+         * Beide Spalten teilen sich den Platz.
+         */
         .two-columns > div {
-            flex: 1;
+            flex: 1 1 50%;
 
             min-width: 0;
         }
 
 
-        .two-columns img {
+        /*
+         * Diese Klasse wird automatisch per JavaScript gesetzt,
+         * wenn in einer Spalte ein Bild gefunden wird.
+         */
+        .two-columns > .auto-image-column {
+            flex: 0 1 42%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-height: 18vh;
+        }
+
+
+        /*
+         * Textspalte bekommt den restlichen Platz.
+         */
+        .two-columns > .auto-text-column {
+            flex: 1 1 58%;
+        }
+
+
+        /*
+         * Bilder in automatisch erkannten Bildspalten
+         * dürfen bewusst hochskaliert werden.
+         */
+        .two-columns > .auto-image-column img {
             display: block;
 
+            width: 100%;
+            height: auto;
+
             max-width: 100%;
-            max-height: 30vh;
+            max-height: 36vh;
 
             margin: 0 auto;
 
@@ -412,7 +460,7 @@
 
         <img
             id="logo"
-            src="assets/logo.png"
+            src="assets/e3dc-logo.png"
             alt="E3/DC"
         >
 
@@ -468,11 +516,6 @@
        KONFIGURATION
        ============================================================= */
 
-    /*
-     * Automatischer Slidewechsel:
-     *
-     * 30.000 ms = 30 Sekunden
-     */
     const slideDuration = 30000;
 
 
@@ -505,10 +548,6 @@
 
         try {
 
-            /*
-             * Timestamp verhindert,
-             * dass eine alte slides.json aus dem Cache kommt.
-             */
             const response = await fetch(
                 "slides.json?v=" + Date.now(),
                 {
@@ -552,7 +591,7 @@
 
 
             /*
-             * Beim Start direkt eine zufällige Slide anzeigen.
+             * Beim Start zufällige Slide auswählen.
              */
             const firstSlide =
                 Math.floor(
@@ -565,9 +604,6 @@
             );
 
 
-            /*
-             * Automatischen Wechsel starten.
-             */
             startTimer();
 
         }
@@ -601,7 +637,7 @@
 
 
         /*
-         * Nach der letzten Slide wieder zur ersten.
+         * Nach letzter Slide wieder zur ersten.
          */
         if (index >= slides.length) {
             index = 0;
@@ -609,7 +645,7 @@
 
 
         /*
-         * Vor der ersten Slide wieder zur letzten.
+         * Vor erster Slide wieder zur letzten.
          */
         if (index < 0) {
             index = slides.length - 1;
@@ -622,10 +658,6 @@
 
         try {
 
-            /*
-             * Timestamp verhindert,
-             * dass eine alte Slide aus dem Cache geladen wird.
-             */
             const separator =
                 slides[index].includes("?")
                     ? "&"
@@ -662,8 +694,8 @@
 
 
             /*
-             * Wenn in der Zwischenzeit eine andere Slide
-             * angefordert wurde, diese Antwort ignorieren.
+             * Falls inzwischen eine neuere Slide
+             * angefordert wurde, Antwort ignorieren.
              */
             if (
                 thisLoadVersion !== loadVersion
@@ -684,7 +716,7 @@
 
 
             /*
-             * Neue Slide laden.
+             * Slide in Wrapper laden.
              */
             container.innerHTML = `
                 <div id="slide-content">
@@ -694,14 +726,22 @@
 
 
             /*
+             * Bestehende Slide automatisch optimieren.
+             *
+             * Unter anderem werden Bildspalten erkannt
+             * und sinnvoll vergrößert.
+             */
+            optimizeSlideLayout();
+
+
+            /*
              * QR-Code aktualisieren.
              */
             updateQRCode();
 
 
             /*
-             * Slide vollständig in den verfügbaren
-             * Bildschirmbereich einpassen.
+             * Slide in verfügbaren Bereich einpassen.
              */
             await fitSlide();
 
@@ -721,6 +761,91 @@
             `;
 
         }
+
+    }
+
+
+
+    /* =============================================================
+       SLIDE-LAYOUT AUTOMATISCH OPTIMIEREN
+       ============================================================= */
+
+    function optimizeSlideLayout() {
+
+        const slide =
+            document.getElementById(
+                "slide-content"
+            );
+
+
+        if (!slide) {
+            return;
+        }
+
+
+        /*
+         * Alle zweispaltigen Bereiche untersuchen.
+         */
+        const twoColumnLayouts =
+            slide.querySelectorAll(
+                ".two-columns"
+            );
+
+
+        twoColumnLayouts.forEach(layout => {
+
+            const columns =
+                Array.from(
+                    layout.children
+                );
+
+
+            columns.forEach(column => {
+
+                /*
+                 * Eventuell bereits gesetzte automatische
+                 * Klassen entfernen.
+                 */
+                column.classList.remove(
+                    "auto-image-column",
+                    "auto-text-column"
+                );
+
+
+                /*
+                 * Prüfen, ob die Spalte mindestens
+                 * ein Bild enthält.
+                 */
+                const image =
+                    column.querySelector("img");
+
+
+                if (image) {
+
+                    /*
+                     * Bildspalte automatisch erkennen.
+                     */
+                    column.classList.add(
+                        "auto-image-column"
+                    );
+
+                }
+
+                else {
+
+                    /*
+                     * Keine Bilder:
+                     * als Textspalte behandeln.
+                     */
+                    column.classList.add(
+                        "auto-text-column"
+                    );
+
+                }
+
+            });
+
+        });
 
     }
 
@@ -750,14 +875,15 @@
 
 
         /*
-         * Vor der Messung immer auf Originalgröße zurücksetzen.
+         * Vor Messung immer wieder auf
+         * Originalgröße zurücksetzen.
          */
         content.style.transform =
             "scale(1)";
 
 
         /*
-         * Auf alle Bilder innerhalb der Slide warten.
+         * Auf alle Bilder warten.
          */
         const images =
             content.querySelectorAll("img");
@@ -801,10 +927,8 @@
 
 
         /*
-         * Zwei Renderzyklen warten.
-         *
-         * Dadurch sind Zeilenumbrüche, Bilder und
-         * andere Layoutinformationen endgültig berechnet.
+         * Zwei Renderzyklen warten,
+         * damit Größen final berechnet wurden.
          */
         await new Promise(resolve => {
 
@@ -819,9 +943,6 @@
         });
 
 
-        /*
-         * Padding des Containers ermitteln.
-         */
         const style =
             getComputedStyle(container);
 
@@ -839,7 +960,7 @@
 
 
         /*
-         * Tatsächlich verfügbarer Bereich.
+         * Verfügbarer Platz.
          */
         const availableWidth =
             container.clientWidth
@@ -854,7 +975,7 @@
 
 
         /*
-         * Tatsächliche Größe des Slide-Inhalts.
+         * Tatsächliche Slide-Größe.
          */
         const contentWidth =
             content.scrollWidth;
@@ -865,9 +986,7 @@
 
 
         /*
-         * Skalierungsfaktor bestimmen.
-         *
-         * Slides werden niemals größer als 100 % angezeigt.
+         * Passenden Skalierungsfaktor berechnen.
          */
         let scale =
             Math.min(
@@ -878,8 +997,7 @@
 
 
         /*
-         * 2 % Sicherheitspuffer gegen Rundungsabweichungen
-         * des iiSignage-Browsers.
+         * Kleiner Sicherheitspuffer.
          */
         if (scale < 1) {
 
@@ -923,13 +1041,13 @@
 
 
         /*
-         * Alten QR-Code entfernen.
+         * Alten QR-Code löschen.
          */
         qrContainer.innerHTML = "";
 
 
         /*
-         * Metadaten der aktuellen Slide suchen.
+         * Metadaten suchen.
          */
         const metadata =
             slideContainer.querySelector(
@@ -938,8 +1056,7 @@
 
 
         /*
-         * Keine Metadaten vorhanden:
-         * QR-Code ausblenden.
+         * Keine Metadaten vorhanden.
          */
         if (!metadata) {
 
@@ -952,15 +1069,14 @@
 
 
         /*
-         * URL aus den Slide-Metadaten lesen.
+         * URL lesen.
          */
         const url =
             metadata.dataset.qrUrl;
 
 
         /*
-         * Keine URL:
-         * QR-Code ebenfalls ausblenden.
+         * Keine URL vorhanden.
          */
         if (!url) {
 
@@ -973,7 +1089,7 @@
 
 
         /*
-         * QR-Bereich anzeigen.
+         * QR-Code anzeigen.
          */
         qrArea.style.display =
             "flex";
@@ -981,9 +1097,6 @@
 
         /*
          * QR-Code erzeugen.
-         *
-         * Intern wird er mit hoher Auflösung erzeugt,
-         * damit er auch auf dem 4K-Panel scharf bleibt.
          */
         new QRCode(
             qrContainer,
@@ -1011,10 +1124,6 @@
 
     function getRandomSlide() {
 
-        /*
-         * Bei nur einer vorhandenen Slide
-         * kann keine andere ausgewählt werden.
-         */
         if (slides.length <= 1) {
 
             return 0;
@@ -1025,10 +1134,6 @@
         let nextSlide;
 
 
-        /*
-         * So lange auswählen,
-         * bis es nicht die aktuelle Slide ist.
-         */
         do {
 
             nextSlide =
@@ -1069,14 +1174,11 @@
 
 
     /* =============================================================
-       AUTOMATISCHER TIMER
+       TIMER
        ============================================================= */
 
     function startTimer() {
 
-        /*
-         * Eventuellen alten Timer beenden.
-         */
         if (slideTimer !== null) {
 
             clearInterval(
@@ -1086,9 +1188,6 @@
         }
 
 
-        /*
-         * Alle 30 Sekunden zufällige Slide anzeigen.
-         */
         slideTimer =
             setInterval(
 
@@ -1118,8 +1217,7 @@
 
 
         /*
-         * Nach manueller Navigation beginnen
-         * die 30 Sekunden wieder von vorne.
+         * Timer nach manueller Navigation neu starten.
          */
         startTimer();
 
@@ -1152,7 +1250,7 @@
 
             /*
              * Pfeil rechts:
-             * nächste Slide
+             * nächste Slide.
              */
             if (
                 event.key ===
@@ -1168,7 +1266,7 @@
 
             /*
              * Pfeil links:
-             * vorherige Slide
+             * vorherige Slide.
              */
             else if (
                 event.key ===
@@ -1188,13 +1286,19 @@
 
 
     /* =============================================================
-       ÄNDERUNG DER VIEWPORT-GRÖSSE
+       VIEWPORT-ÄNDERUNG
        ============================================================= */
 
     window.addEventListener(
         "resize",
 
         async () => {
+
+            /*
+             * Layout erneut optimieren,
+             * falls sich die Größe verändert.
+             */
+            optimizeSlideLayout();
 
             await fitSlide();
 
