@@ -10,6 +10,22 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <!-- Caching möglichst vermeiden -->
+    <meta
+        http-equiv="Cache-Control"
+        content="no-cache, no-store, must-revalidate"
+    >
+
+    <meta
+        http-equiv="Pragma"
+        content="no-cache"
+    >
+
+    <meta
+        http-equiv="Expires"
+        content="0"
+    >
+
     <title>E3/DC – Did you know?</title>
 
 
@@ -22,6 +38,7 @@
         * {
             box-sizing: border-box;
         }
+
 
         html,
         body {
@@ -70,6 +87,7 @@
             height: 11vh;
 
             display: flex;
+
             align-items: center;
             justify-content: space-between;
 
@@ -120,19 +138,23 @@
             overflow: hidden;
 
             /*
-             * Ausgangsgröße.
+             * iiSignage meldet:
              *
-             * Wenn die Slide nicht passt, wird nicht nur die Schrift,
-             * sondern der gesamte Slide-Inhalt proportional skaliert.
+             * 1280 × 720 CSS-Pixel
+             * DPR 3
+             *
+             * 21px entsprechen ungefähr unserer ursprünglich
+             * für Full HD gedachten 32px-Schriftgröße.
              */
-            font-size: 32px;
+            font-size: 21px;
         }
 
 
         /*
-         * Wrapper um die jeweils geladene Slide.
+         * Der gesamte Inhalt einer Slide wird in diesen
+         * Wrapper geladen.
          *
-         * Dieser gesamte Bereich wird bei Bedarf skaliert.
+         * Falls nötig, wird dieser vollständig skaliert.
          */
         #slide-content {
             width: 100%;
@@ -302,10 +324,6 @@
            SLIDE-METADATEN
            ========================================================= */
 
-        /*
-         * Diese Elemente enthalten lediglich Konfiguration
-         * wie die QR-Code-URL und sollen nicht sichtbar sein.
-         */
         .slide-meta {
             display: none;
         }
@@ -370,37 +388,6 @@
             color: #555555;
         }
 
-
-        /* =========================================================
-           DEBUG-ANZEIGE
-           ========================================================= */
-
-        /*
-         * Vorübergehend eingebaut, damit wir sehen können,
-         * welchen Viewport der iiSignage-Browser tatsächlich meldet.
-         *
-         * Kann später komplett entfernt werden.
-         */
-        #debug-info {
-            position: fixed;
-
-            left: 8px;
-            bottom: 8px;
-
-            z-index: 99999;
-
-            padding: 6px 8px;
-
-            background: rgba(255, 255, 255, 0.85);
-
-            color: #000000;
-
-            font-size: 12px;
-            line-height: 1.3;
-
-            pointer-events: none;
-        }
-
     </style>
 
 </head>
@@ -434,7 +421,7 @@
 
 
     <!-- =========================================================
-         SLIDE
+         SLIDE-BEREICH
          ========================================================= -->
 
     <main id="slide-container">
@@ -463,20 +450,12 @@
     </div>
 
 
-
-    <!-- =========================================================
-         DEBUG-INFORMATIONEN
-         ========================================================= -->
-
-    <div id="debug-info"></div>
-
-
 </div>
 
 
 
 <!-- =============================================================
-     QR-CODE BIBLIOTHEK
+     QR-CODE-BIBLIOTHEK
      ============================================================= -->
 
 <script src="assets/qrcode.min.js"></script>
@@ -489,6 +468,11 @@
        KONFIGURATION
        ============================================================= */
 
+    /*
+     * Automatischer Slidewechsel:
+     *
+     * 30.000 ms = 30 Sekunden
+     */
     const slideDuration = 30000;
 
 
@@ -521,8 +505,12 @@
 
         try {
 
+            /*
+             * Timestamp verhindert,
+             * dass eine alte slides.json aus dem Cache kommt.
+             */
             const response = await fetch(
-                "slides.json",
+                "slides.json?v=" + Date.now(),
                 {
                     cache: "no-store"
                 }
@@ -564,7 +552,7 @@
 
 
             /*
-             * Beim Start eine zufällige Slide auswählen.
+             * Beim Start direkt eine zufällige Slide anzeigen.
              */
             const firstSlide =
                 Math.floor(
@@ -572,7 +560,9 @@
                 );
 
 
-            await showSlide(firstSlide);
+            await showSlide(
+                firstSlide
+            );
 
 
             /*
@@ -632,8 +622,25 @@
 
         try {
 
+            /*
+             * Timestamp verhindert,
+             * dass eine alte Slide aus dem Cache geladen wird.
+             */
+            const separator =
+                slides[index].includes("?")
+                    ? "&"
+                    : "?";
+
+
+            const slideUrl =
+                slides[index]
+                + separator
+                + "v="
+                + Date.now();
+
+
             const response = await fetch(
-                slides[index],
+                slideUrl,
                 {
                     cache: "no-store"
                 }
@@ -655,8 +662,8 @@
 
 
             /*
-             * Falls zwischenzeitlich bereits eine andere
-             * Slide angefordert wurde, diese Antwort ignorieren.
+             * Wenn in der Zwischenzeit eine andere Slide
+             * angefordert wurde, diese Antwort ignorieren.
              */
             if (
                 thisLoadVersion !== loadVersion
@@ -677,10 +684,7 @@
 
 
             /*
-             * Slide in einen Wrapper setzen.
-             *
-             * Der gesamte Wrapper kann anschließend
-             * proportional skaliert werden.
+             * Neue Slide laden.
              */
             container.innerHTML = `
                 <div id="slide-content">
@@ -690,22 +694,16 @@
 
 
             /*
-             * QR-Code erzeugen.
+             * QR-Code aktualisieren.
              */
             updateQRCode();
 
 
             /*
-             * Anschließend prüfen,
-             * ob die Slide vollständig hineinpasst.
+             * Slide vollständig in den verfügbaren
+             * Bildschirmbereich einpassen.
              */
             await fitSlide();
-
-
-            /*
-             * Debug-Anzeige aktualisieren.
-             */
-            updateDebugInfo();
 
         }
 
@@ -752,15 +750,14 @@
 
 
         /*
-         * Vor dem Messen immer wieder
-         * auf Originalgröße zurücksetzen.
+         * Vor der Messung immer auf Originalgröße zurücksetzen.
          */
         content.style.transform =
             "scale(1)";
 
 
         /*
-         * Auf Bilder innerhalb der Slide warten.
+         * Auf alle Bilder innerhalb der Slide warten.
          */
         const images =
             content.querySelectorAll("img");
@@ -804,10 +801,10 @@
 
 
         /*
-         * Zwei Browser-Renderzyklen warten.
+         * Zwei Renderzyklen warten.
          *
-         * Dadurch stellen wir sicher, dass Größen,
-         * Zeilenumbrüche und Bilder final berechnet wurden.
+         * Dadurch sind Zeilenumbrüche, Bilder und
+         * andere Layoutinformationen endgültig berechnet.
          */
         await new Promise(resolve => {
 
@@ -823,32 +820,36 @@
 
 
         /*
-         * Padding des Containers bestimmen.
+         * Padding des Containers ermitteln.
          */
         const style =
             getComputedStyle(container);
 
 
         const horizontalPadding =
-            parseFloat(style.paddingLeft) +
+            parseFloat(style.paddingLeft)
+            +
             parseFloat(style.paddingRight);
 
 
         const verticalPadding =
-            parseFloat(style.paddingTop) +
+            parseFloat(style.paddingTop)
+            +
             parseFloat(style.paddingBottom);
 
 
         /*
-         * Tatsächlich verfügbarer sichtbarer Bereich.
+         * Tatsächlich verfügbarer Bereich.
          */
         const availableWidth =
-            container.clientWidth -
+            container.clientWidth
+            -
             horizontalPadding;
 
 
         const availableHeight =
-            container.clientHeight -
+            container.clientHeight
+            -
             verticalPadding;
 
 
@@ -866,8 +867,7 @@
         /*
          * Skalierungsfaktor bestimmen.
          *
-         * Nie größer als 1.
-         * Slides werden also nicht künstlich vergrößert.
+         * Slides werden niemals größer als 100 % angezeigt.
          */
         let scale =
             Math.min(
@@ -878,47 +878,21 @@
 
 
         /*
-         * Kleiner Sicherheitspuffer.
-         *
-         * Gerade eingebettete Browser auf Signage-Geräten
-         * können bei Berechnungen Rundungsabweichungen haben.
+         * 2 % Sicherheitspuffer gegen Rundungsabweichungen
+         * des iiSignage-Browsers.
          */
         if (scale < 1) {
 
-            scale *= 0.95;
+            scale *= 0.98;
 
         }
 
 
         /*
-         * Slide skalieren.
+         * Gesamte Slide proportional skalieren.
          */
         content.style.transform =
             `scale(${scale})`;
-
-
-        console.log(
-            "Slide:",
-            slides[currentSlide],
-
-            "Viewport:",
-            window.innerWidth
-            + "x"
-            + window.innerHeight,
-
-            "Content:",
-            contentWidth
-            + "x"
-            + contentHeight,
-
-            "Available:",
-            availableWidth
-            + "x"
-            + availableHeight,
-
-            "Scale:",
-            scale
-        );
 
     }
 
@@ -949,7 +923,7 @@
 
 
         /*
-         * Eventuellen vorherigen QR-Code entfernen.
+         * Alten QR-Code entfernen.
          */
         qrContainer.innerHTML = "";
 
@@ -964,7 +938,8 @@
 
 
         /*
-         * Keine Metadaten vorhanden.
+         * Keine Metadaten vorhanden:
+         * QR-Code ausblenden.
          */
         if (!metadata) {
 
@@ -977,14 +952,15 @@
 
 
         /*
-         * URL auslesen.
+         * URL aus den Slide-Metadaten lesen.
          */
         const url =
             metadata.dataset.qrUrl;
 
 
         /*
-         * Keine URL angegeben.
+         * Keine URL:
+         * QR-Code ebenfalls ausblenden.
          */
         if (!url) {
 
@@ -1006,9 +982,8 @@
         /*
          * QR-Code erzeugen.
          *
-         * Intern wird eine höhere Auflösung verwendet.
-         * CSS skaliert ihn anschließend auf die
-         * gewünschte Bildschirmgröße.
+         * Intern wird er mit hoher Auflösung erzeugt,
+         * damit er auch auf dem 4K-Panel scharf bleibt.
          */
         new QRCode(
             qrContainer,
@@ -1031,14 +1006,14 @@
 
 
     /* =============================================================
-       ZUFÄLLIGE SLIDE
+       ZUFÄLLIGE SLIDE BESTIMMEN
        ============================================================= */
 
     function getRandomSlide() {
 
         /*
-         * Bei nur einer Slide kann keine andere
-         * ausgewählt werden.
+         * Bei nur einer vorhandenen Slide
+         * kann keine andere ausgewählt werden.
          */
         if (slides.length <= 1) {
 
@@ -1051,8 +1026,8 @@
 
 
         /*
-         * So lange würfeln,
-         * bis eine andere Slide gefunden wurde.
+         * So lange auswählen,
+         * bis es nicht die aktuelle Slide ist.
          */
         do {
 
@@ -1075,6 +1050,10 @@
 
 
 
+    /* =============================================================
+       ZUFÄLLIGE SLIDE ANZEIGEN
+       ============================================================= */
+
     async function showRandomSlide() {
 
         const nextSlide =
@@ -1090,11 +1069,14 @@
 
 
     /* =============================================================
-       TIMER
+       AUTOMATISCHER TIMER
        ============================================================= */
 
     function startTimer() {
 
+        /*
+         * Eventuellen alten Timer beenden.
+         */
         if (slideTimer !== null) {
 
             clearInterval(
@@ -1104,6 +1086,9 @@
         }
 
 
+        /*
+         * Alle 30 Sekunden zufällige Slide anzeigen.
+         */
         slideTimer =
             setInterval(
 
@@ -1133,8 +1118,8 @@
 
 
         /*
-         * Nach manueller Navigation
-         * beginnen die 30 Sekunden neu.
+         * Nach manueller Navigation beginnen
+         * die 30 Sekunden wieder von vorne.
          */
         startTimer();
 
@@ -1166,7 +1151,8 @@
         event => {
 
             /*
-             * Pfeil nach rechts
+             * Pfeil rechts:
+             * nächste Slide
              */
             if (
                 event.key ===
@@ -1181,7 +1167,8 @@
 
 
             /*
-             * Pfeil nach links
+             * Pfeil links:
+             * vorherige Slide
              */
             else if (
                 event.key ===
@@ -1201,44 +1188,13 @@
 
 
     /* =============================================================
-       DEBUG-INFORMATIONEN
-       ============================================================= */
-
-    function updateDebugInfo() {
-
-        const debug =
-            document.getElementById(
-                "debug-info"
-            );
-
-
-        debug.innerHTML =
-            "Viewport: "
-            + window.innerWidth
-            + " × "
-            + window.innerHeight
-
-            + " | Screen: "
-            + window.screen.width
-            + " × "
-            + window.screen.height
-
-            + " | DPR: "
-            + window.devicePixelRatio;
-
-    }
-
-
-
-    /* =============================================================
-       ÄNDERUNG DER BROWSERGRÖSSE
+       ÄNDERUNG DER VIEWPORT-GRÖSSE
        ============================================================= */
 
     window.addEventListener(
         "resize",
-        async () => {
 
-            updateDebugInfo();
+        async () => {
 
             await fitSlide();
 
@@ -1250,8 +1206,6 @@
     /* =============================================================
        START
        ============================================================= */
-
-    updateDebugInfo();
 
     loadSlideList();
 
